@@ -20,7 +20,7 @@ Servo Releaser_Servo;
 
 AccelStepper motorX(1, MOTOR_X_STEP_PIN, MOTOR_X_DIR_PIN); 
 AccelStepper motorY(1, MOTOR_Y_STEP_PIN, MOTOR_Y_DIR_PIN); 
-
+MultiStepper Motors
 int runn = 0;
 
 void setup() {
@@ -30,28 +30,46 @@ void setup() {
   motorX.setEnablePin(MOTOR_X_ENABLE_PIN);
   motorX.setPinsInverted(false, false, true);  
   motorX.setAcceleration(2000);
-  motorX.enableOutputs();
   
   motorY.setEnablePin(MOTOR_Y_ENABLE_PIN);
   motorY.setPinsInverted(false, false, true);
   motorY.setAcceleration(2000);  
-  motorY.enableOutputs();
+
+
+  Motors.addStepper(motorX);
+  Motors.addStepper(motorY);
 }
 // HERE IS THE MAIN LOOP
 void loop() {
   if (runn == 0 ){
    // Motors_enable();
-    
+    multitests();
     runn++;
   }
-  simpletests();
+  simpletests_v2();
   delay(1000);
+  CD_release();
   Motors_disable();
 }
 
 
 
 // HERE ARE ALL REFERENCED FUNCTIONS
+
+void simpletests_v2 (){
+   motorX.runToNewPosition(2000);
+   motorY.runToNewPosition(2000);
+   motorX.runToNewPosition(0);
+   motorY.runToNewPosition(0);
+  
+ }
+void multitests (){
+   Motors.moveTo([2000, 2000]);
+   Motors.runSpeedToPosition(); 
+   Motors.moveTo([0, 500]);
+   Motors.runSpeedToPosition(); 
+ 
+ }
 
 
 void simpletests (){
@@ -90,15 +108,6 @@ bool y_done =false;
 
 
 
-void Motors_disable (){
-  motorX.disableOutputs();
-  motorY.disableOutputs();
-  }
-  
-void Motors_enable (){
-  motorX.enableOutputs();
-  motorY.enableOutputs();
-  }
 
 
 void tests (){
@@ -128,7 +137,7 @@ void tests (){
  }
 
  void init_func(){
-  Motors_enable();
+  Motors.enableOutputs();
   searchEndstops();
-  Motors_disable();
+  Motors.disableOutputs();
   }
