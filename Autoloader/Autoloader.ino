@@ -10,7 +10,7 @@
 #define MOTOR_Y_ENABLE_PIN 8
 #define MOTOR_Y_STEP_PIN 3
 #define MOTOR_Y_DIR_PIN 6
-#define CONTINIOUS TRUE // IS IT A CONTINIOUS Rotation Servo
+#define CONTINIOUS true // IS IT A CONTINIOUS Rotation Servo
 
 #include <AccelStepper.h>
 #include <MultiStepper.h>
@@ -29,12 +29,12 @@ void setup() {
   motorX.setEnablePin(MOTOR_X_ENABLE_PIN);
   motorX.setPinsInverted(false, false, true);  
   motorX.setAcceleration(100);
-  //motorX.enableOutputs();
+  motorX.enableOutputs();
   
   motorY.setEnablePin(MOTOR_Y_ENABLE_PIN);
   motorY.setPinsInverted(false, false, true);
   motorY.setAcceleration(100);  
-  //motorY.enableOutputs();
+  motorY.enableOutputs();
 }
 
 void loop() {
@@ -42,19 +42,23 @@ void loop() {
     tests();
     runn++;
   }
-  
- }
+  disableALL();
+}
 
+void disableALL(){
+  motorX.disableOutputs();
+  motorY.disableOutputs();
+  }
 void tests (){
- motorX.move(3000);
+ motorX.move(2000);
   motorX.run();
-  motorY.move(3000);
+  motorY.move(2000);
   motorY.run();
   CD_release();
  }
 
  void CD_release(){
-  if (CONTINIOUS = TRUE){
+  if (CONTINIOUS){
   Releaser_Servo.write(180);
   delay(250);
   Releaser_Servo.write(0);
