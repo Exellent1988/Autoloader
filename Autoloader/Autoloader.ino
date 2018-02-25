@@ -10,7 +10,7 @@
 #define MOTOR_Y_ENABLE_PIN 8
 #define MOTOR_Y_STEP_PIN 3
 #define MOTOR_Y_DIR_PIN 6
-
+#define CONTINIOUS TRUE // IS IT A CONTINIOUS Rotation Servo
 
 #include <AccelStepper.h>
 #include <MultiStepper.h>
@@ -19,6 +19,8 @@ Servo Releaser_Servo;
 
 AccelStepper motorX(1, MOTOR_X_STEP_PIN, MOTOR_X_DIR_PIN); 
 AccelStepper motorY(1, MOTOR_Y_STEP_PIN, MOTOR_Y_DIR_PIN); 
+
+int runn = 0;
 
 void setup() {
   //Setup the Servo
@@ -36,7 +38,11 @@ void setup() {
 }
 
 void loop() {
-tests();
+  if (runn == 0){
+    tests();
+    runn++;
+  }
+  
  }
 
 void tests (){
@@ -48,8 +54,19 @@ void tests (){
  }
 
  void CD_release(){
+  if (CONTINIOUS = TRUE){
   Releaser_Servo.write(180);
-  delay(125);
+  delay(250);
   Releaser_Servo.write(0);
-  delay(125);
+  delay(250);
+  Releaser_Servo.write(90);
+  }
+  else{
+  Releaser_Servo.write(180);
+  delay(250);
+  Releaser_Servo.write(0);
+  delay(250);
+  }
  }
+
+ 
