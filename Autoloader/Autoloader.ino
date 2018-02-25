@@ -28,27 +28,41 @@ void setup() {
   // Setup the Stepper Motors
   motorX.setEnablePin(MOTOR_X_ENABLE_PIN);
   motorX.setPinsInverted(false, false, true);  
-  motorX.setAcceleration(100);
-  motorX.enableOutputs();
+  motorX.setAcceleration(2000);
   
   motorY.setEnablePin(MOTOR_Y_ENABLE_PIN);
   motorY.setPinsInverted(false, false, true);
-  motorY.setAcceleration(100);  
-  motorY.enableOutputs();
+  motorY.setAcceleration(2000);  
 }
 
 void loop() {
   if (runn == 0){
+    enableAll();
     tests();
     runn++;
   }
   disableALL();
 }
 
+
+
+
+
+
+
+
+
 void disableALL(){
   motorX.disableOutputs();
   motorY.disableOutputs();
   }
+  
+void enableALL(){
+  motorX.enableOutputs();
+  motorY.enableOutputs();
+  }
+
+
 void tests (){
  motorX.move(2000);
   motorX.run();
