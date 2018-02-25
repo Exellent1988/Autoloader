@@ -43,7 +43,7 @@ void setup() {
 void loop() {
   if (runn == 0 ){
    // Motors_enable();
-    multitests();
+    
     runn++;
   }
   simpletests_v2();
@@ -55,22 +55,15 @@ void loop() {
 
 
 // HERE ARE ALL REFERENCED FUNCTIONS
-
-void simpletests_v2 (){
-   motorX.runToNewPosition(2000);
-   motorY.runToNewPosition(2000);
-   motorX.runToNewPosition(0);
-   motorY.runToNewPosition(0);
-  
+void tests (){
+  //Motors_enable();
+ motorX.move(2000);
+  motorX.run();
+  motorY.move(2000);
+  motorY.run();
+ // delay(1000);
+  CD_release();
  }
-void multitests (){
-   Motors.moveTo([2000, 2000]);
-   Motors.runSpeedToPosition(); 
-   Motors.moveTo([0, 500]);
-   Motors.runSpeedToPosition(); 
- 
- }
-
 
 void simpletests (){
    motorX.move(200);
@@ -78,6 +71,22 @@ void simpletests (){
    motorY.move(200);
    motorY.run();
   }
+
+void simpletests_v2 (){
+   motorX.runToNewPosition(2000);
+   motorY.runToNewPosition(2000);
+   motorX.runToNewPosition(0);
+   motorY.runToNewPosition(0);
+  
+  }
+void multitests (){
+   Motors.moveTo([2000, 2000]);
+   Motors.runSpeedToPosition(); 
+   Motors.moveTo([0, 500]);
+   Motors.runSpeedToPosition(); 
+  }
+
+
 
 void searchEndstops (){
 bool  notdone = true;
@@ -108,17 +117,18 @@ bool y_done =false;
 
 
 
+void Motors_disable (){
+  motorX.disableOutputs();
+  motorY.disableOutputs();
+  }
+  
+void Motors_enable (){
+  motorX.enableOutputs();
+  motorY.enableOutputs();
+  }
 
 
-void tests (){
-  //Motors_enable();
- motorX.move(2000);
-  motorX.run();
-  motorY.move(2000);
-  motorY.run();
- // delay(1000);
-  CD_release();
- }
+
 
  void CD_release(){
   if (CONTINIOUS){
@@ -137,7 +147,7 @@ void tests (){
  }
 
  void init_func(){
-  Motors.enableOutputs();
+  Motors_enable();
   searchEndstops();
-  Motors.disableOutputs();
+  Motors_disable();
   }
