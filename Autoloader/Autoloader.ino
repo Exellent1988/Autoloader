@@ -53,21 +53,28 @@ void loop() {
 
 
 void searchEndstops(){
-bool  notdone = false;
-  while (!notdone){
-    while (digitalRead(X_ENDSTOP) == LOW || digitalRead(Y_ENDSTOP) == LOW ){
+bool  notdone = true;
+bool x_done = false;
+bool y_done =false;
+  while (notdone){
+    if(digitalRead(X_ENDSTOP) == LOW){
       motorX.setSpeed(SLOWSPEED);
       motorX.move(-200);
+      motorX.run();
+      }
+     else{x_done = true;}
+    if(digitalRead(Y_ENDSTOP) == LOW ){
       motorY.setSpeed(SLOWSPEED);
       motorY.move(-200);
-      
-      motorX.run();
       motorY.run();
-      
       }
+     else{y_done = true;}
+    if(x_done && y_done){
     motorX.setCurrentPosition(0);
     motorY.setCurrentPosition(0);  
+    notdone =false;
     }
+  }
 }
 
 
