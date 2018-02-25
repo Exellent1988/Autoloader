@@ -30,18 +30,22 @@ void setup() {
   motorX.setEnablePin(MOTOR_X_ENABLE_PIN);
   motorX.setPinsInverted(false, false, true);  
   motorX.setAcceleration(2000);
+  motorX.enableOutputs();
   
   motorY.setEnablePin(MOTOR_Y_ENABLE_PIN);
   motorY.setPinsInverted(false, false, true);
   motorY.setAcceleration(2000);  
+  motorY.enableOutputs();
 }
 // HERE IS THE MAIN LOOP
 void loop() {
-  if (runn == 0){
-    Motors_enable();
-    tests();
+  if (runn == 0 ){
+   // Motors_enable();
+    
     runn++;
   }
+  simpletests();
+  delay(1000);
   Motors_disable();
 }
 
@@ -50,9 +54,14 @@ void loop() {
 // HERE ARE ALL REFERENCED FUNCTIONS
 
 
+void simpletests (){
+   motorX.move(200);
+   motorX.run();
+   motorY.move(200);
+   motorY.run();
+  }
 
-
-void searchEndstops(){
+void searchEndstops (){
 bool  notdone = true;
 bool x_done = false;
 bool y_done =false;
@@ -93,10 +102,12 @@ void Motors_enable (){
 
 
 void tests (){
+  //Motors_enable();
  motorX.move(2000);
   motorX.run();
   motorY.move(2000);
   motorY.run();
+ // delay(1000);
   CD_release();
  }
 
