@@ -38,28 +38,24 @@ void setup() {
 // HERE IS THE MAIN LOOP
 void loop() {
   if (runn == 0){
-    enableAll();
+    Motors_enable();
     tests();
     runn++;
   }
-  disableALL();
+  Motors_disable();
 }
 
 
 
 // HERE ARE ALL REFERENCED FUNCTIONS
 
-void init_func(){
-  enableAll();
-  searchEndstops();
-  disableAll();
-  }
+
 
 
 void searchEndstops(){
-  notdone = false;
+bool  notdone = false;
   while (!notdone){
-    while (digitalRead(X_ENDSTOP) = LOW || digitalRead(Y_ENDSTOP) + LOW ){
+    while (digitalRead(X_ENDSTOP) == LOW || digitalRead(Y_ENDSTOP) == LOW ){
       motorX.setSpeed(SLOWSPEED);
       motorX.move(-200);
       motorY.setSpeed(SLOWSPEED);
@@ -78,12 +74,12 @@ void searchEndstops(){
 
 
 
-void disableALL(){
+void Motors_disable (){
   motorX.disableOutputs();
   motorY.disableOutputs();
   }
   
-void enableALL(){
+void Motors_enable (){
   motorX.enableOutputs();
   motorY.enableOutputs();
   }
@@ -113,4 +109,8 @@ void tests (){
   }
  }
 
- 
+ void init_func(){
+  Motors_enable();
+  searchEndstops();
+  Motors_disable();
+  }
