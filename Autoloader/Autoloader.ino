@@ -44,7 +44,7 @@ void tests (){
   motorX.run();
   motorY.move(3000);
   motorY.run();
-  CD_Release();
+  CD_release();
  }
 
  void CD_release(){
