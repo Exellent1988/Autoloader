@@ -49,7 +49,7 @@ void tests (){
 
  void CD_release(){
   Releaser_Servo.write(180);
-  delay(250);
+  delay(125);
   Releaser_Servo.write(0);
-  delay(250);
+  delay(125);
  }
