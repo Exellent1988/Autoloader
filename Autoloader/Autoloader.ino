@@ -11,7 +11,8 @@
 #define MOTOR_Y_STEP_PIN 3
 #define MOTOR_Y_DIR_PIN 6
 #define CONTINIOUS true // IS IT A CONTINIOUS Rotation Servo
-
+#define SLOWSPEED 100
+#define FASTSPEED 2000
 #include <AccelStepper.h>
 #include <MultiStepper.h>
 #include <Servo.h>
@@ -34,7 +35,7 @@ void setup() {
   motorY.setPinsInverted(false, false, true);
   motorY.setAcceleration(2000);  
 }
-
+// HERE IS THE MAIN LOOP
 void loop() {
   if (runn == 0){
     enableAll();
@@ -46,7 +47,32 @@ void loop() {
 
 
 
+// HERE ARE ALL REFERENCED FUNCTIONS
 
+void init_func(){
+  enableAll();
+  searchEndstops();
+  disableAll();
+  }
+
+
+void searchEndstops(){
+  notdone = false;
+  while (!notdone){
+    while (digitalRead(X_ENDSTOP) = LOW || digitalRead(Y_ENDSTOP) + LOW ){
+      motorX.setSpeed(SLOWSPEED);
+      motorX.move(-200);
+      motorY.setSpeed(SLOWSPEED);
+      motorY.move(-200);
+      
+      motorX.run();
+      motorY.run();
+      
+      }
+    motorX.setCurrentPosition(0);
+    motorY.setCurrentPosition(0);  
+    }
+}
 
 
 
