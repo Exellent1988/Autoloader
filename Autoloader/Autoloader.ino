@@ -20,7 +20,7 @@ Servo Releaser_Servo;
 
 AccelStepper motorX(1, MOTOR_X_STEP_PIN, MOTOR_X_DIR_PIN); 
 AccelStepper motorY(1, MOTOR_Y_STEP_PIN, MOTOR_Y_DIR_PIN); 
-MultiStepper Motors
+MultiStepper Motors;
 int runn = 0;
 
 void setup() {
@@ -29,11 +29,13 @@ void setup() {
   // Setup the Stepper Motors
   motorX.setEnablePin(MOTOR_X_ENABLE_PIN);
   motorX.setPinsInverted(false, false, true);  
-  motorX.setAcceleration(2000);
+  motorX.setAcceleration(360);
+  motorX.setMaxSpeed(360);
   
   motorY.setEnablePin(MOTOR_Y_ENABLE_PIN);
   motorY.setPinsInverted(false, false, true);
-  motorY.setAcceleration(2000);  
+  motorY.setAcceleration(360);
+  motorY.setMaxSpeed(360);  
 
 
   Motors.addStepper(motorX);
@@ -42,7 +44,7 @@ void setup() {
 // HERE IS THE MAIN LOOP
 void loop() {
   if (runn == 0 ){
-   // Motors_enable();
+    Motors_enable();
     
     runn++;
   }
@@ -79,10 +81,18 @@ void simpletests_v2 (){
    motorY.runToNewPosition(0);
   
   }
+  
 void multitests (){
-   Motors.moveTo([2000, 2000]);
-   Motors.runSpeedToPosition(); 
-   Motors.moveTo([0, 500]);
+   long pos[2];
+    pos[0] = 2000;
+    pos[1] = 2000;
+   Motors.moveTo(pos);
+   Motors.runSpeedToPosition();
+    delay(1000);
+    long zero[2];
+    zero[0] = 0;
+    zero[1] = 0;
+   Motors.moveTo(zero);
    Motors.runSpeedToPosition(); 
   }
 
