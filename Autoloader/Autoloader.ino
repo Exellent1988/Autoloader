@@ -1,5 +1,3 @@
-
-
 #define X_ENDSTOP 9
 #define Y_ENDSTOP 10
 #define SERVO 12
@@ -22,6 +20,12 @@ AccelStepper motorX(1, MOTOR_X_STEP_PIN, MOTOR_X_DIR_PIN);
 AccelStepper motorY(1, MOTOR_Y_STEP_PIN, MOTOR_Y_DIR_PIN); 
 MultiStepper Motors;
 int runn = 0;
+char inputString = '0';         // a String to hold incoming data
+boolean stringComplete = false;  // whether the string is complete
+
+String helptext = "Enable the Motors with E \n Disale the Motors with D \n Or You can run different Programms by sending/ typing:  a, b, c, d or 'H' to show this text.";
+
+
 
 void setup() {
   //Setup the Servo
@@ -40,18 +44,39 @@ void setup() {
 
   Motors.addStepper(motorX);
   Motors.addStepper(motorY);
+
+  // SETUP Serial
+  Serial.begin(9600);
+  Serial.print(helptext);
+  // reserve 200 bytes for the inputString:
 }
 // HERE IS THE MAIN LOOP
 void loop() {
-  if (runn == 0 ){
-    Motors_enable();
-    
-    runn++;
-  }
-  simpletests_v2();
-  delay(1000);
-  CD_release();
-  Motors_disable();
+  if (stringComplete) {
+      switch (inputString) {
+        case 'a':
+          simpletests();
+          break;
+        case 'b':
+          simpletests_v2();
+          break;
+        case 'c':
+          init_func();
+          break;
+        case 'H':
+          Serial.print(helptext);
+          break;
+        case 'D':
+          Motors_disable();
+          break;
+        case 'E':
+          Motors_enable();
+          break;
+      }
+      // clear the string:
+      inputString = '0';
+      stringComplete = false;
+    }
 }
 
 
@@ -161,3 +186,19 @@ void Motors_enable (){
   searchEndstops();
   Motors_disable();
   }
+
+void serialEvent() {
+  while (Serial.available()) {
+    // get the new byte:
+    char inChar = (char)Serial.read();
+    // add it to the inputString:
+    if (inChar == '\n') {
+      stringComplete = true;
+    }
+    else{
+    inputString += inChar;
+    // if the incoming character is a newline, set a flag so the main loop can
+    // do something about it:
+    }
+  }
+}
