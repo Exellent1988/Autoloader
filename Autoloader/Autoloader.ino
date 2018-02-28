@@ -10,8 +10,9 @@
 #define MOTOR_Y_DIR_PIN 6
 #define CONTINIOUS true // IS IT A CONTINIOUS Rotation Servo
 #define SLOWSPEED 100
-#define FASTSPEED 2000
+#define FASTSPEED 600
 
+bool homed = false;
 bool Motors_enabled = false;
 int runn = 0;
 char inputString = "";         // a String to hold incoming data
@@ -38,13 +39,13 @@ void setup() {
   // Setup the Stepper Motors
   motorX.setEnablePin(MOTOR_X_ENABLE_PIN);
   motorX.setPinsInverted(false, false, true);  
-  motorX.setAcceleration(360);
-  motorX.setMaxSpeed(360);
+  motorX.setAcceleration(FASTSPEED);
+  motorX.setMaxSpeed(FASTSPEED);
   
   motorY.setEnablePin(MOTOR_Y_ENABLE_PIN);
   motorY.setPinsInverted(false, false, true);
-  motorY.setAcceleration(360);
-  motorY.setMaxSpeed(360);  
+  motorY.setAcceleration(FASTSPEED);
+  motorY.setMaxSpeed(FASTSPEED);  
 
 
   Motors.addStepper(motorX);
@@ -132,8 +133,8 @@ void simpletests_v2 (){
   
 void multitests (){
    long pos[2];
-    pos[0] = 2000;
-    pos[1] = 2000;
+    pos[0] = 10;
+    pos[1] = 200;
    Motors.moveTo(pos);
    Motors.runSpeedToPosition();
     delay(1000);
@@ -171,6 +172,7 @@ bool y_done =false;
     motorX.setCurrentPosition(0);
     motorY.setCurrentPosition(0);  
     notdone = false;
+    homed = true;
     Serial.println("Init done!");
     }
   }
@@ -178,7 +180,11 @@ bool y_done =false;
 
 
 
-
+void Motors_setSpeed(int Speed){
+   motorY.setSpeed(Speed);
+   motorX.setSpeed(Speed);
+   Serial.println("Speed set to: " + String(Speed));
+  }
 
 void Motors_disable (){
   motorX.disableOutputs();
@@ -215,6 +221,7 @@ void Motors_enable (){
   Motors_enable();
   searchEndstops();
   Motors_disable();
+  Motors_setSpeed(FASTSPEED);
   }
 
 void serialEvent() {
