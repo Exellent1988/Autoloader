@@ -11,19 +11,24 @@
 #define CONTINIOUS true // IS IT A CONTINIOUS Rotation Servo
 #define SLOWSPEED 100
 #define FASTSPEED 2000
+
+bool Motors_enabled = false;
+int runn = 0;
+char inputString = "";         // a String to hold incoming data
+bool stringComplete = false;  // whether the string is complete
+int arg = 0;
+String helptext = "Enable the Motors with E \nDisable the Motors with D \nOr You can run different Programms by sending/ typing:  a, b, c, d or 'H' to show this text.\n";
+int Argument = 0;
+
 #include <AccelStepper.h>
 #include <MultiStepper.h>
 #include <Servo.h>
-Servo Releaser_Servo;
 
+
+Servo Releaser_Servo;
 AccelStepper motorX(1, MOTOR_X_STEP_PIN, MOTOR_X_DIR_PIN); 
 AccelStepper motorY(1, MOTOR_Y_STEP_PIN, MOTOR_Y_DIR_PIN); 
 MultiStepper Motors;
-int runn = 0;
-char inputString = "";         // a String to hold incoming data
-boolean stringComplete = false;  // whether the string is complete
-
-String helptext = "Enable the Motors with E \n Disale the Motors with D \n Or You can run different Programms by sending/ typing:  a, b, c, d or 'H' to show this text.";
 
 
 
@@ -53,53 +58,62 @@ void setup() {
 // HERE IS THE MAIN LOOP
 void loop() {
   if (stringComplete) {
-      switch (inputString) {
-        case 'a':
-          simpletests();
-          Serial.println("run simpletest");
-          break;
-        case 'b':
-          simpletests_v2();
-          Serial.println("run simpletest_v2");
-          break;
-          case 'c':
-          multitests();
-          Serial.println("run multi");
-          break;
-        case 'I':
-          init_func();
-          Serial.println("run init");
-          break;
-        case 'H':
-          Serial.println(helptext);
-          break;
-        case 'D':
-          Motors_disable();
-          Serial.println("Motors disabled!");
-          break;
-        case 'E':
-          Motors_enable();
-          Serial.println("Motors enabled!");
-          break;
-      }
-      // clear the string:
+      run_Programms();
       inputString = "";
       stringComplete = false;
     }
 }
 
 
-
 // HERE ARE ALL REFERENCED FUNCTIONS
-void tests (){
-  //Motors_enable();
- motorX.move(2000);
-  motorX.run();
-  motorY.move(2000);
-  motorY.run();
- // delay(1000);
-  CD_release();
- }
+
+void run_Programms (){
+  switch (inputString) {
+        case 'r':
+            run_something(arg);
+          break;
+        case 'a':
+          Serial.println("run simpletest");
+          simpletests();
+          break;
+        case 'b':
+          Serial.println("run simpletest_v2");
+          simpletests_v2();
+          break;
+        case 'c':
+          Serial.println("run multiple Motors simultaniously");
+          multitests();
+          break;
+
+         
+         case 'C':
+          Serial.println("Relese CD");
+          CD_release();
+          break;
+        case 'D':
+          Serial.println("Motors disabled!");
+          Motors_disable();
+          break;
+        case 'E':
+          Serial.println("Motors enabled!");
+          Motors_enable();
+          break;
+        case 'I':
+          Serial.println("run init");
+          init_func();
+          break;
+        case 'H':
+          Serial.println(helptext);
+          break;
+        case 'S':
+          Serial.println("Motorstate: "+ String(Motors_enabled));
+          break;
+        
+        }
+}
+void run_something (int Argument){
+  Serial.println("I'm doing something with Argument: " + String(Argument));
+}
 
 void simpletests (){
    motorX.move(200);
@@ -137,22 +151,27 @@ bool  notdone = true;
 bool x_done = false;
 bool y_done =false;
   while (notdone){
-    if(digitalRead(X_ENDSTOP) == LOW){
+    if(digitalRead(X_ENDSTOP) == HIGH && !x_done){
       motorX.setSpeed(SLOWSPEED);
-      motorX.move(-200);
-      motorX.run();
+      motorX.move(-1);
+      motorX.runSpeed();
       }
-     else{x_done = true;}
-    if(digitalRead(Y_ENDSTOP) == LOW ){
+     else if (!x_done){x_done = true;
+     Serial.println("X-Endstop Touched");
+     }
+    if(digitalRead(Y_ENDSTOP) == HIGH && !y_done ){
       motorY.setSpeed(SLOWSPEED);
-      motorY.move(-200);
-      motorY.run();
+      motorY.move(-1);
+      motorY.runSpeed();
       }
-     else{y_done = true;}
+     else if (!y_done){y_done = true;
+     Serial.println("Y-Endstop Touched");
+     }
     if(x_done && y_done){
     motorX.setCurrentPosition(0);
     motorY.setCurrentPosition(0);  
-    notdone =false;
+    notdone = false;
+    Serial.println("Init done!");
     }
   }
 }
@@ -164,11 +183,13 @@ bool y_done =false;
 void Motors_disable (){
   motorX.disableOutputs();
   motorY.disableOutputs();
+  Motors_enabled = false;
   }
   
 void Motors_enable (){
   motorX.enableOutputs();
   motorY.enableOutputs();
+  Motors_enabled = true;
   }
 
 
