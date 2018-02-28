@@ -20,7 +20,7 @@ AccelStepper motorX(1, MOTOR_X_STEP_PIN, MOTOR_X_DIR_PIN);
 AccelStepper motorY(1, MOTOR_Y_STEP_PIN, MOTOR_Y_DIR_PIN); 
 MultiStepper Motors;
 int runn = 0;
-char inputString = '0';         // a String to hold incoming data
+char inputString = "";         // a String to hold incoming data
 boolean stringComplete = false;  // whether the string is complete
 
 String helptext = "Enable the Motors with E \n Disale the Motors with D \n Or You can run different Programms by sending/ typing:  a, b, c, d or 'H' to show this text.";
@@ -56,25 +56,34 @@ void loop() {
       switch (inputString) {
         case 'a':
           simpletests();
+          Serial.println("run simpletest");
           break;
         case 'b':
           simpletests_v2();
+          Serial.println("run simpletest_v2");
           break;
-        case 'c':
+          case 'c':
+          multitests();
+          Serial.println("run multi");
+          break;
+        case 'I':
           init_func();
+          Serial.println("run init");
           break;
         case 'H':
-          Serial.print(helptext);
+          Serial.println(helptext);
           break;
         case 'D':
           Motors_disable();
+          Serial.println("Motors disabled!");
           break;
         case 'E':
           Motors_enable();
+          Serial.println("Motors enabled!");
           break;
       }
       // clear the string:
-      inputString = '0';
+      inputString = "";
       stringComplete = false;
     }
 }
@@ -195,10 +204,8 @@ void serialEvent() {
     if (inChar == '\n') {
       stringComplete = true;
     }
-    else{
-    inputString += inChar;
+    else{inputString = inChar;}
     // if the incoming character is a newline, set a flag so the main loop can
     // do something about it:
-    }
   }
 }
