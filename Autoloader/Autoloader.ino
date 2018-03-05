@@ -24,7 +24,7 @@ int Argument = 0;
 #include <AccelStepper.h>
 #include <MultiStepper.h>
 #include <Servo.h>
-
+#include <Cmd.h>
 
 Servo Releaser_Servo;
 AccelStepper motorX(1, MOTOR_X_STEP_PIN, MOTOR_X_DIR_PIN); 
@@ -45,7 +45,7 @@ void setup() {
   motorY.setEnablePin(MOTOR_Y_ENABLE_PIN);
   motorY.setPinsInverted(false, false, true);
   motorY.setAcceleration(FASTSPEED);
-  motorY.setMaxSpeed(FASTSPEED);  
+  motorY.setMaxSpeed(FASTSPEED);
 
 
   Motors.addStepper(motorX);
@@ -54,7 +54,11 @@ void setup() {
   // SETUP Serial
   Serial.begin(9600);
   Serial.print(helptext);
-  // reserve 200 bytes for the inputString:
+  cmdInit(&Serial);
+
+
+  cmdAdd("run", run_something);
+  
 }
 // HERE IS THE MAIN LOOP
 void loop() {
@@ -70,9 +74,6 @@ void loop() {
 
 void run_Programms (){
   switch (inputString) {
-        case 'r':
-            run_something(arg);
-          break;
         case 'a':
           Serial.println("run simpletest");
           simpletests();
@@ -112,8 +113,8 @@ void run_Programms (){
         
         }
 }
-void run_something (int Argument){
-  Serial.println("I'm doing something with Argument: " + String(Argument));
+void run_something (int arg_cnt, char **args){
+  Serial.println("I'm doing something with Argument: " + String(args[0]));
 }
 
 void simpletests (){
@@ -203,10 +204,10 @@ void Motors_enable (){
 
  void CD_release(){
   if (CONTINIOUS){
+  Releaser_Servo.write(-180);
+  delay(400);
   Releaser_Servo.write(180);
-  delay(250);
-  Releaser_Servo.write(0);
-  delay(250);
+  delay(415);
   Releaser_Servo.write(90);
   }
   else{
