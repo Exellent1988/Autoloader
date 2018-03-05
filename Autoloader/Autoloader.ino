@@ -9,9 +9,9 @@
 #define MOTOR_Y_STEP_PIN 3
 #define MOTOR_Y_DIR_PIN 6
 #define CONTINIOUS true // IS IT A CONTINIOUS Rotation Servo
-#define SLOWSPEED 100
-#define FASTSPEED 600
-
+#define SLOWSPEED  100
+#define FASTSPEED  600
+char **empty_1 ;
 bool homed = false;
 bool Motors_enabled = false;
 int runn = 0;
@@ -58,7 +58,25 @@ void setup() {
 
 
   cmdAdd("run", run_something);
+  cmdAdd("Command",run_Programms);
   cmdAdd("C",run_Programms);
+  cmdAdd("Speed",Motors_setSpeed);
+  cmdAdd("s",Motors_setSpeed);
+  cmdAdd("Init",init_func);
+  cmdAdd("I",init_func);
+  cmdAdd("Test",tests);
+  cmdAdd("T",tests);
+  cmdAdd("Help",help);
+  cmdAdd("H",help);
+  cmdAdd("Enable",Motors_enable);
+  cmdAdd("E",Motors_enable);
+  cmdAdd("Disable",Motors_disable);
+  cmdAdd("D",Motors_disable);
+  cmdAdd("Status",Status);
+  cmdAdd("S",Status);
+  cmdAdd("Release",CD_release);
+  cmdAdd("R",CD_release);
+  
      
 }
 // HERE IS THE MAIN LOOP
@@ -68,9 +86,19 @@ void loop() {
 
 
 // HERE ARE ALL REFERENCED FUNCTIONS
-
 void run_Programms (int arg_cnt, char **args){
-  char **input = args[1];
+}
+void help (int arg_cnt, char **args){
+  Serial.println(helptext);
+}
+void Status (int arg_cnt, char **args){
+  Serial.println("Motorsstate: "+ String(Motors_enabled));
+  Serial.println("Motorposition: ");
+  Serial.println("X: "+String(motorX.currentPosition()));
+  Serial.println("Y: "+String(motorY.currentPosition()));
+}
+void tests (int arg_cnt, char **args){
+  char input = args[1][0];
   switch (input) {
         case 'a':
           Serial.println("run simpletest");
@@ -84,36 +112,14 @@ void run_Programms (int arg_cnt, char **args){
           Serial.println("run multiple Motors simultaniously");
           multitests();
           break;
-
-         
-         case 'C':
-          Serial.println("Relese CD");
-          CD_release();
-          break;
-        case 'D':
-          Serial.println("Motors disabled!");
-          Motors_disable();
-          break;
-        case 'E':
-          Serial.println("Motors enabled!");
-          Motors_enable();
-          break;
-        case 'I':
-          Serial.println("run init");
-          init_func();
-          break;
-        case 'H':
-          Serial.println(helptext);
-          break;
-        case 'S':
-          Serial.println("Motorstate: "+ String(Motors_enabled));
-          break;
           default:
           Serial.println("Command:" + String(input));
           break;
         
         }
 }
+
+
 void run_something (int arg_cnt, char **args){
   Serial.println("I'm doing something with Argument: " + String(cmdStr2Num(args[1],10)+ cmdStr2Num(args[2],10)));
 }
@@ -182,28 +188,31 @@ bool y_done =false;
 
 
 
-void Motors_setSpeed(int Speed){
+void Motors_setSpeed(int arg_cnt, char **args){
+  int Speed = cmdStr2Num(args[2],10);
    motorY.setSpeed(Speed);
    motorX.setSpeed(Speed);
    Serial.println("Speed set to: " + String(Speed));
   }
 
-void Motors_disable (){
+void Motors_disable (int arg_cnt, char **args){
   motorX.disableOutputs();
   motorY.disableOutputs();
   Motors_enabled = false;
+  Serial.println("Motors disabled");
   }
   
-void Motors_enable (){
+void Motors_enable (int arg_cnt, char **args){
   motorX.enableOutputs();
   motorY.enableOutputs();
   Motors_enabled = true;
+  Serial.println("Motors enabled");
   }
 
 
 
 
- void CD_release(){
+ void CD_release(int arg_cnt, char **args){
   if (CONTINIOUS){
   Releaser_Servo.write(-180);
   delay(400);
@@ -217,25 +226,16 @@ void Motors_enable (){
   Releaser_Servo.write(0);
   delay(250);
   }
+
+  Serial.println("CD released");
  }
 
- void init_func(){
-  Motors_enable();
+ void init_func(int arg_cnt, char **args){
+  Motors_enable(1,empty_1);
   searchEndstops();
-  Motors_disable();
-  Motors_setSpeed(FASTSPEED);
+  Motors_disable(1,empty_1);
+  args[1] =FASTSPEED;
+  Motors_setSpeed(1, args);
+  Serial.println("Initialisiation complete!");
   }
-/*
-void serialEvent() {
-  while (Serial.available()) {
-    // get the new byte:
-    char inChar = (char)Serial.read();
-    // add it to the inputString:
-    if (inChar == '\n') {
-      stringComplete = true;
-    }
-    else{inputString = inChar;}
-    // if the incoming character is a newline, set a flag so the main loop can
-    // do something about it:
-  }
-}*/
+
