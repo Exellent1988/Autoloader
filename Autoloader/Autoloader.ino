@@ -58,22 +58,20 @@ void setup() {
 
 
   cmdAdd("run", run_something);
-  
+  cmdAdd("C",run_Programms);
+     
 }
 // HERE IS THE MAIN LOOP
 void loop() {
-  if (stringComplete) {
-      run_Programms();
-      inputString = "";
-      stringComplete = false;
-    }
+  cmdPoll();
 }
 
 
 // HERE ARE ALL REFERENCED FUNCTIONS
 
-void run_Programms (){
-  switch (inputString) {
+void run_Programms (int arg_cnt, char **args){
+  char **input = args[1];
+  switch (input) {
         case 'a':
           Serial.println("run simpletest");
           simpletests();
@@ -110,11 +108,14 @@ void run_Programms (){
         case 'S':
           Serial.println("Motorstate: "+ String(Motors_enabled));
           break;
+          default:
+          Serial.println("Command:" + String(input));
+          break;
         
         }
 }
 void run_something (int arg_cnt, char **args){
-  Serial.println("I'm doing something with Argument: " + String(args[0]));
+  Serial.println("I'm doing something with Argument: " + String(cmdStr2Num(args[1],10)+ cmdStr2Num(args[2],10)));
 }
 
 void simpletests (){
@@ -224,7 +225,7 @@ void Motors_enable (){
   Motors_disable();
   Motors_setSpeed(FASTSPEED);
   }
-
+/*
 void serialEvent() {
   while (Serial.available()) {
     // get the new byte:
@@ -237,4 +238,4 @@ void serialEvent() {
     // if the incoming character is a newline, set a flag so the main loop can
     // do something about it:
   }
-}
+}*/
